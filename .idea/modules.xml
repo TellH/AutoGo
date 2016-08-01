@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AutoGo.iml" filepath="$PROJECT_DIR$/AutoGo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/autogo-annotation/autogo-annotation.iml" filepath="$PROJECT_DIR$/autogo-annotation/autogo-annotation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/autogo-compiler/autogo-compiler.iml" filepath="$PROJECT_DIR$/autogo-compiler/autogo-compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/autogo-core/autogo-core.iml" filepath="$PROJECT_DIR$/autogo-core/autogo-core.iml" />
+    </modules>
+  </component>
+</project>
