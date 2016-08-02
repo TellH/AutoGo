@@ -10,15 +10,15 @@ import javax.lang.model.util.Elements;
 /**
  * Created by tlh on 2016/7/31.
  */
-public final class IntentValueGroup {
-    private Set<IntentValueEntity> intentValues;
+public final class KeyValueGroup {
+    private Set<KeyValueEntity> intentValues;
     private TypeElement mClassElement;
     private PackageElement mPackageElement;
     private String packageName;
     private String simpleClassName;
     private String className;
 
-    public IntentValueGroup(TypeElement typeElement,Elements elementUtils) {
+    public KeyValueGroup(TypeElement typeElement, Elements elementUtils) {
         intentValues=new LinkedHashSet<>();
         mClassElement=typeElement;
         mPackageElement=elementUtils.getPackageOf(mClassElement);
@@ -27,11 +27,11 @@ public final class IntentValueGroup {
         className=mClassElement.getQualifiedName().toString();
     }
 
-    public void add(IntentValueEntity intentValue){
+    public void add(KeyValueEntity intentValue){
         intentValues.add(intentValue);
     }
 
-    public Set<IntentValueEntity> getIntentValues() {
+    public Set<KeyValueEntity> getIntentValues() {
         return intentValues;
     }
 

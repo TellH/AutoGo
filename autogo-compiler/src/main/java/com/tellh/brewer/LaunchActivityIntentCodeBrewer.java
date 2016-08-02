@@ -3,14 +3,13 @@ package com.tellh.brewer;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.tellh.entity.IntentValueEntity;
-import com.tellh.entity.IntentValueGroup;
+import com.tellh.entity.KeyValueEntity;
+import com.tellh.entity.KeyValueGroup;
 import com.tellh.utils.ClassNames;
-import com.tellh.utils.ProcessorUtils;
+import com.tellh.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,40 +23,19 @@ import javax.lang.model.util.Elements;
 /**
  * Created by tlh on 2016/8/2.
  */
-public class LaunchActivityIntentCodeBrewer {
-    private Filer mFileUtils;
-    private Elements mElementUtils;
-    private Messager mMessager;
+public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
+
     public LaunchActivityIntentCodeBrewer(Filer mFileUtils, Elements mElementUtils, Messager mMessager) {
-        this.mFileUtils = mFileUtils;
-        this.mElementUtils = mElementUtils;
-        this.mMessager = mMessager;
+        super(mFileUtils, mElementUtils, mMessager);
     }
 
-    public void brewCode(IntentValueGroup group) throws IOException {
+    @Override
+    public void brewCode(KeyValueGroup group) throws IOException {
         brewAutoLauncher(group);
         brewAutoAssigner(group);
     }
 
-    /**
-     * public final class TestActivity_AutoAssigner implements AutoAssigner {
-     * private TestActivity target;
-     * private Intent intent;
-     *
-     * @param group
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @Override public void setTarget(Activity target) {
-     * this.target = (TestActivity) target;
-     * intent = target.getIntent();
-     * }
-     * @Override public void assign() {
-     * target.name = intent.getStringExtra("name");
-     * target.age = intent.getIntExtra("age", 0);
-     * }
-     * }
-     */
-    private void brewAutoAssigner(IntentValueGroup group) throws IOException, IllegalArgumentException {
+    private void brewAutoAssigner(KeyValueGroup group) throws IOException, IllegalArgumentException {
         ClassName assignerName = ClassName.get(group.getPackageName(), group.getSimpleClassName() + "_AutoAssigner");
         ClassName activity = ClassName.get(group.getPackageName(), group.getSimpleClassName());
         FieldSpec srcActivity = FieldSpec.builder(activity, "target")
@@ -74,26 +52,25 @@ public class LaunchActivityIntentCodeBrewer {
                 .addStatement("this.target = ($T)target", activity)
                 .build();
         CodeBlock.Builder builder = CodeBlock.builder();
-        for (IntentValueEntity valueEntity : group.getIntentValues()) {
+        for (KeyValueEntity valueEntity : group.getIntentValues()) {
 //            builder.addStatement("$T $L = intent.get%sExtra($S)",
             try {
                 if (valueEntity.getFieldType().isPrimitive()){
-                    builder.addStatement(ProcessorUtils.getFormatForExtra(valueEntity),
-                            valueEntity.getFieldType(),
+                    builder.addStatement(Utils.getFormatForExtra(valueEntity),
                             valueEntity.getFieldName(),
                             valueEntity.getKey(),
                             valueEntity.getFieldName());
                 }else {
-                    builder.addStatement(ProcessorUtils.getFormatForExtra(valueEntity),
+                    builder.addStatement(Utils.getFormatForExtra(valueEntity),
                             valueEntity.getFieldType(),
                             valueEntity.getFieldName(),
                             valueEntity.getKey());
+                    builder.beginControlFlow("if (!$T.checkNull($L))",ClassNames.CLASSUTILS,valueEntity.getFieldName())
+                            .addStatement("target.$L = $L",valueEntity.getFieldName(),valueEntity.getFieldName())
+                            .endControlFlow();
                 }
-                builder.beginControlFlow("if (!$T.checkNull($L))",ClassNames.CLASSUTILS,valueEntity.getFieldName())
-                        .addStatement("target.$L = $L",valueEntity.getFieldName(),valueEntity.getFieldName())
-                        .endControlFlow();
             } catch (IllegalArgumentException e) {
-                ProcessorUtils.error(mMessager, e.getMessage().toString());
+                Utils.error(mMessager, e.getMessage().toString());
                 continue;
             }
         }
@@ -104,6 +81,7 @@ public class LaunchActivityIntentCodeBrewer {
                 .addStatement("intent = target.getIntent()")
                 .addStatement("this.target = ($T)target", activity)
                 .addCode(builder.build())
+                .addStatement("target = null")
                 .addStatement("return intent")
                 .build();
         TypeSpec AutoAssigner = TypeSpec.classBuilder(assignerName)
@@ -114,49 +92,13 @@ public class LaunchActivityIntentCodeBrewer {
                 .addMethod(setTarget)
                 .addMethod(assign)
                 .build();
-        JavaFile javaFile = JavaFile.builder(group.getPackageName(), AutoAssigner)
-                .build();
-        javaFile.writeTo(mFileUtils);
+        brewJavaFile(group.getPackageName(), AutoAssigner, mFileUtils);
     }
-
-    /**
-     * code template
-     * public class TestActivity_AutoLauncher implements AutoLauncher {
-     * private final Activity srcActivity;
-     * private Intent intent;
-     * <p/>
-     * public TestActivity_AutoLauncher name(String value) {
-     * intent.putExtra("name", value);
-     * return this;
-     * }
-     * <p/>
-     * public TestActivity_AutoLauncher age(int value) {
-     * intent.putExtra("age", value);
-     * //        intent.putCharSequenceArrayListExtra()
-     * //        intent.putIntegerArrayListExtra()
-     * //        intent.putParcelableArrayListExtra()
-     * //        intent.putStringArrayListExtra()
-     * return this;
-     * }
-     * <p/>
-     * public TestActivity_AutoLauncher(Activity srcActivity) {
-     * intent = new Intent(srcActivity, TestActivity.class);
-     * this.srcActivity = srcActivity;
-     * }
-     *
-     * @param group
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @Override public void go() {
-     * srcActivity.startActivity(intent);
-     * }
-     * }
-     */
-    private void brewAutoLauncher(IntentValueGroup group) throws IOException, IllegalArgumentException {
+    private void brewAutoLauncher(KeyValueGroup group) throws IOException, IllegalArgumentException {
         ClassName activity = ClassName.get(group.getPackageName(), group.getSimpleClassName());
         ClassName launcherName = ClassName.get(group.getPackageName(), group.getSimpleClassName() + "_AutoLauncher");
         FieldSpec srcActivity = FieldSpec.builder(ClassNames.ACTIVITY, "srcActivity")
-                .addModifiers(Modifier.FINAL, Modifier.PRIVATE)
+                .addModifiers(Modifier.PRIVATE)
                 .build();
         FieldSpec intent = FieldSpec.builder(ClassNames.INTENT, "intent")
                 .addModifiers(Modifier.PRIVATE)
@@ -169,13 +111,15 @@ public class LaunchActivityIntentCodeBrewer {
                 .build();
         MethodSpec go = MethodSpec.methodBuilder("go")
                 .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
                 .returns(TypeName.VOID)
                 .addStatement("srcActivity.startActivity(intent)")
-                .addAnnotation(Override.class)
+                .addStatement("intent = null")
+                .addStatement("srcActivity = null")
                 .build();
         List<MethodSpec> valueSetters = new ArrayList<>();
 
-        for (IntentValueEntity valueEntity : group.getIntentValues()) {
+        for (KeyValueEntity valueEntity : group.getIntentValues()) {
             TypeName fieldType = valueEntity.getFieldType();
             MethodSpec.Builder builder = MethodSpec.methodBuilder(valueEntity.getKey())
                     .addModifiers(Modifier.PUBLIC)
@@ -190,8 +134,8 @@ public class LaunchActivityIntentCodeBrewer {
             } else if (fieldType.equals(ClassNames.PARCELABLE_ARRAY_LIST)) {
                 builder.addStatement("intent.putParcelableArrayListExtra($S,value)", valueEntity.getKey());
             } else {
-                if (!ProcessorUtils.checkFieldType(fieldType)) {
-                    ProcessorUtils.error(mMessager, "your value type :" + fieldType + " do not allow to put into an intent object.");
+                if (!Utils.checkFieldType(fieldType)) {
+                    Utils.error(mMessager, "your value type :" + fieldType + " do not allow to put into an intent object.");
                     continue;
                 }
                 builder.addStatement("intent.putExtra($S,value)", valueEntity.getKey());
@@ -209,8 +153,7 @@ public class LaunchActivityIntentCodeBrewer {
                 .addMethod(go)
                 .addMethods(valueSetters)
                 .build();
-        JavaFile javaFile = JavaFile.builder(group.getPackageName(), AutoLauncher)
-                .build();
-        javaFile.writeTo(mFileUtils);
+        brewJavaFile(group.getPackageName(), AutoLauncher, mFileUtils);
     }
+
 }

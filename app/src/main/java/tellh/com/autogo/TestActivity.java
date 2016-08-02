@@ -16,8 +16,7 @@ public class TestActivity extends AppCompatActivity {
     //the annotated field should not be private
     @IntentValue("myName")
     String name;
-    @IntentValue
-    int age;
+    @IntentValue int age;
     @IntentValue
     ArrayList<String> friends;
     @IntentValue

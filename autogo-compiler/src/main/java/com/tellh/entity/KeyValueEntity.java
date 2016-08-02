@@ -1,6 +1,5 @@
 package com.tellh.entity;
 
-import com.autogo.annotation.IntentValue;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
@@ -10,12 +9,12 @@ import javax.lang.model.element.VariableElement;
 /**
  * Created by tlh on 2016/7/31.
  */
-public class IntentValueEntity {
-    private String mKey;
-    private VariableElement mElement;
-    private TypeElement mClassElement;//The class which the field belongs to
-    private TypeName fieldType;
-    private String fieldName;
+public abstract class KeyValueEntity {
+    protected String mKey;
+    protected VariableElement mElement;
+    protected TypeElement mClassElement;//The class which the field belongs to
+    protected TypeName fieldType;
+    protected String fieldName;
 
     public TypeName getFieldType() {
         return fieldType;
@@ -25,17 +24,15 @@ public class IntentValueEntity {
         return fieldName;
     }
 
-    public IntentValueEntity(VariableElement element) {
+    public KeyValueEntity(VariableElement element) {
         this.mElement = element;
-        IntentValue annotation = mElement.getAnnotation(IntentValue.class);
-        mKey = annotation.value();
-        if (mKey == null || mKey.equals(""))
-            mKey = mElement.getSimpleName().toString();
+        initKey();
         mClassElement = (TypeElement) element.getEnclosingElement();
         fieldType = ClassName.get(element.asType());
-
         fieldName = element.getSimpleName().toString();
     }
+
+    protected abstract void initKey();
 
     public String getKey() {
         return mKey;

@@ -1,9 +1,10 @@
 package com.tellh.processor;
 
 import com.autogo.annotation.IntentValue;
+import com.autogo.annotation.SharePrefs;
 import com.google.auto.service.AutoService;
 import com.tellh.brewer.AutoGoCodeBrewer;
-import com.tellh.utils.ProcessorUtils;
+import com.tellh.utils.Utils;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -26,7 +27,9 @@ public class AutoGoProcessor extends AbstractProcessor {
     private Filer mFileUtils;
     private Messager mMessager;
     private IntentValueHandler intentValueHandler;
+    private SharePrefsHandler sharePrefsHandler;
     private AutoGoCodeBrewer.Builder autoGoBrewerBuilder;
+    private static boolean generated = false;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -35,12 +38,14 @@ public class AutoGoProcessor extends AbstractProcessor {
         mMessager = processingEnv.getMessager();
         autoGoBrewerBuilder = AutoGoCodeBrewer.builder(mFileUtils);
         intentValueHandler = new IntentValueHandler(processingEnv);
+        sharePrefsHandler = new SharePrefsHandler(processingEnv);
     }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> annotationTypes = new LinkedHashSet<>();
         annotationTypes.add(IntentValue.class.getCanonicalName());
+        annotationTypes.add(SharePrefs.class.getCanonicalName());
         return annotationTypes;
     }
 
@@ -52,12 +57,15 @@ public class AutoGoProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         //Take note, this method could be invoke several times during compiling.
-        if (!intentValueHandler.handle(roundEnv, autoGoBrewerBuilder))
-            return true;
+        intentValueHandler.handle(roundEnv, autoGoBrewerBuilder);
+        sharePrefsHandler.handle(roundEnv, autoGoBrewerBuilder);
         try {
-            autoGoBrewerBuilder.brew();
+            if (generated)
+                return true;
+            autoGoBrewerBuilder.brewCode();
+            generated = true;
         } catch (IOException e) {
-            ProcessorUtils.error(mMessager, e.getMessage());
+            Utils.error(mMessager, e.getMessage());
         }
         return true;
     }

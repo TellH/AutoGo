@@ -9,9 +9,12 @@ import com.squareup.javapoet.ParameterizedTypeName;
 public class ClassNames {
     public static final ClassName ACTIVITY = ClassName.get("android.app", "Activity");
     public static final ClassName LOG = ClassName.get("android.util", "Log");
+    public static final ClassName CONTEXT = ClassName.get("android.content", "Context");
     public static final ClassName CLASSUTILS = ClassName.get("autogo.utils", "ClassUtils");
+    public static final ClassName AUTO_SHARE_PREFS_ASSISTANT = ClassName.get("autogo.internal", "AutoSharePrefsAssistant");
     public static final ClassName AUTO_ASSIGNER = ClassName.get("autogo.internal", "AutoAssigner");
     public static final ClassName AUTO_LAUNCHER = ClassName.get("autogo.internal", "AutoLauncher");
+    public static final ClassName SHARE_PREFS_UTILS = ClassName.get("autogo.utils", "SharedPreferencesUtils");
     public static final ClassName INTENT = ClassName.get("android.content", "Intent");
     public static final ClassName ARRAY_LIST = ClassName.get("java.util", "ArrayList");
     public static final ClassName MAP = ClassName.get("java.util", "Map");
@@ -21,4 +24,5 @@ public class ClassNames {
     public static final ParameterizedTypeName CHAR_SEQUENCE_ARRAY_LIST = ParameterizedTypeName.get(ARRAY_LIST, ClassName.get(CharSequence.class));
     public static final ParameterizedTypeName PARCELABLE_ARRAY_LIST = ParameterizedTypeName.get(ARRAY_LIST, ClassName.get("android.os", "Parcelable"));
     public static final ParameterizedTypeName MAP_ASSIGNER = ParameterizedTypeName.get(MAP, ClassName.get(String.class), AUTO_ASSIGNER);
+    public static final ParameterizedTypeName MAP_SHARE_PREFS_ASSISTANT = ParameterizedTypeName.get(MAP, ClassName.get(String.class), AUTO_SHARE_PREFS_ASSISTANT);
 }

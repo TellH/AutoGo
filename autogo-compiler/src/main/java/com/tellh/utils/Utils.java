@@ -3,7 +3,7 @@ package com.tellh.utils;
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
-import com.tellh.entity.IntentValueEntity;
+import com.tellh.entity.KeyValueEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +15,7 @@ import javax.tools.Diagnostic;
 /**
  * Created by tlh on 2016/7/31.
  */
-public class ProcessorUtils {
+public class Utils {
     private static Set<TypeName> typeSupportedSet;
 
     static {
@@ -50,27 +50,27 @@ public class ProcessorUtils {
                 String.format(msg, args));
     }
 
-    public static String getFormatForExtra(final IntentValueEntity valueEntity) throws IllegalArgumentException {
+    public static String getFormatForExtra(final KeyValueEntity valueEntity) throws IllegalArgumentException {
 //        "target.$L = intent.get%sExtra($S)"
 //        "$T $L = intent.get%sExtra($S)"
         TypeName fieldType = valueEntity.getFieldType();
         String key = valueEntity.getKey();
         if (fieldType.equals(TypeName.BOOLEAN)) {
-            return String.format("$T $L = intent.get%sExtra($S,$L)", "Boolean");
+            return String.format("target.$L = intent.get%sExtra($S,target.$L)", "Boolean");
         } else if (fieldType.equals(TypeName.DOUBLE)) {
-            return String.format("$T $L = intent.get%sExtra($S,$L)", "Double");
+            return String.format("target.$L = intent.get%sExtra($S,target.$L)", "Double");
         } else if (fieldType.equals(TypeName.INT)) {
-            return String.format("$T $L = intent.get%sExtra($S,$L)", "Int");
+            return String.format("target.$L = intent.get%sExtra($S,target.$L)", "Int");
         } else if (fieldType.equals(TypeName.CHAR)) {
-            return String.format("$T $L = intent.get%sExtra($S,$L)", "Char");
+            return String.format("target.$L = intent.get%sExtra($S,target.$L)", "Char");
         } else if (fieldType.equals(TypeName.FLOAT)) {
-            return String.format("$T $L = intent.get%sExtra($S,$L)", "Float");
+            return String.format("target.$L = intent.get%sExtra($S,target.$L)", "Float");
         } else if (fieldType.equals(TypeName.BYTE)) {
-            return String.format("$T $L = intent.get%sExtra($S,$L)", "Byte");
+            return String.format("target.$L = intent.get%sExtra($S,target.$L)", "Byte");
         } else if (fieldType.equals(TypeName.LONG)) {
-            return String.format("$T $L = intent.get%sExtra($S,$L)", "Long");
+            return String.format("target.$L = intent.get%sExtra($S,target.$L)", "Long");
         } else if (fieldType.equals(TypeName.SHORT)) {
-            return String.format("$T $L = intent.get%sExtra($S,$L)", "Short");
+            return String.format("target.$L = intent.get%sExtra($S,target.$L)", "Short");
         } else if (fieldType.equals(ClassName.get(String.class))) {
             return String.format("$T $L = intent.get%sExtra($S)", "String");
         } else if (fieldType.equals(ClassName.get(CharSequence.class))) {
@@ -110,7 +110,17 @@ public class ProcessorUtils {
     }
 
     public static boolean checkFieldType(TypeName fieldType) {
-        if (fieldType.isPrimitive()||typeSupportedSet.contains(fieldType))
+        if (fieldType.isPrimitive() || typeSupportedSet.contains(fieldType))
+            return true;
+        return false;
+    }
+
+    public static boolean isData(TypeName typeName) {
+        if (typeName.equals(TypeName.INT) ||
+                typeName.equals(TypeName.BOOLEAN) ||
+                typeName.equals(TypeName.FLOAT) ||
+                typeName.equals(TypeName.LONG) ||
+                typeName.equals(ClassName.get(String.class)))
             return true;
         return false;
     }
