@@ -15,7 +15,6 @@ import com.tellh.utils.ProcessorUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -29,7 +28,6 @@ public class LaunchActivityIntentCodeBrewer {
     private Filer mFileUtils;
     private Elements mElementUtils;
     private Messager mMessager;
-    private Map<String, IntentValueGroup> mClassifyMap;
     public LaunchActivityIntentCodeBrewer(Filer mFileUtils, Elements mElementUtils, Messager mMessager) {
         this.mFileUtils = mFileUtils;
         this.mElementUtils = mElementUtils;
@@ -79,10 +77,18 @@ public class LaunchActivityIntentCodeBrewer {
         for (IntentValueEntity valueEntity : group.getIntentValues()) {
 //            builder.addStatement("$T $L = intent.get%sExtra($S)",
             try {
-                builder.addStatement(ProcessorUtils.getFormatForExtra(valueEntity),
-                        valueEntity.getFieldType(),
-                        valueEntity.getFieldName(),
-                        valueEntity.getKey());
+                if (valueEntity.getFieldType().isPrimitive()){
+                    builder.addStatement(ProcessorUtils.getFormatForExtra(valueEntity),
+                            valueEntity.getFieldType(),
+                            valueEntity.getFieldName(),
+                            valueEntity.getKey(),
+                            valueEntity.getFieldName());
+                }else {
+                    builder.addStatement(ProcessorUtils.getFormatForExtra(valueEntity),
+                            valueEntity.getFieldType(),
+                            valueEntity.getFieldName(),
+                            valueEntity.getKey());
+                }
                 builder.beginControlFlow("if (!$T.checkNull($L))",ClassNames.CLASSUTILS,valueEntity.getFieldName())
                         .addStatement("target.$L = $L",valueEntity.getFieldName(),valueEntity.getFieldName())
                         .endControlFlow();

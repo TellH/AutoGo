@@ -56,21 +56,21 @@ public class ProcessorUtils {
         TypeName fieldType = valueEntity.getFieldType();
         String key = valueEntity.getKey();
         if (fieldType.equals(TypeName.BOOLEAN)) {
-            return String.format("$T $L = intent.get%sExtra($S,false)", "Boolean");
+            return String.format("$T $L = intent.get%sExtra($S,$L)", "Boolean");
         } else if (fieldType.equals(TypeName.DOUBLE)) {
-            return String.format("$T $L = intent.get%sExtra($S,%f)", "Double", 0.0);
+            return String.format("$T $L = intent.get%sExtra($S,$L)", "Double");
         } else if (fieldType.equals(TypeName.INT)) {
-            return String.format("$T $L = intent.get%sExtra($S,%d)", "Int", 0);
+            return String.format("$T $L = intent.get%sExtra($S,$L)", "Int");
         } else if (fieldType.equals(TypeName.CHAR)) {
-            return String.format("$T $L = intent.get%sExtra($S,%c)", "Char", 'a');
+            return String.format("$T $L = intent.get%sExtra($S,$L)", "Char");
         } else if (fieldType.equals(TypeName.FLOAT)) {
-            return String.format("$T $L = intent.get%sExtra($S,%f)", "Float", 0.0);
+            return String.format("$T $L = intent.get%sExtra($S,$L)", "Float");
         } else if (fieldType.equals(TypeName.BYTE)) {
-            return String.format("$T $L = intent.get%sExtra($S,%d)", "Byte", 0);
+            return String.format("$T $L = intent.get%sExtra($S,$L)", "Byte");
         } else if (fieldType.equals(TypeName.LONG)) {
-            return String.format("$T $L = intent.get%sExtra($S,%d)", "Long", 0);
+            return String.format("$T $L = intent.get%sExtra($S,$L)", "Long");
         } else if (fieldType.equals(TypeName.SHORT)) {
-            return String.format("$T $L = intent.get%sExtra($S,%d)", "Short", 0);
+            return String.format("$T $L = intent.get%sExtra($S,$L)", "Short");
         } else if (fieldType.equals(ClassName.get(String.class))) {
             return String.format("$T $L = intent.get%sExtra($S)", "String");
         } else if (fieldType.equals(ClassName.get(CharSequence.class))) {
