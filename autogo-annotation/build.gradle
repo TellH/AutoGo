@@ -1,6 +1,17 @@
 apply plugin: 'java'
+apply plugin: 'bintray-release'
 sourceCompatibility = rootProject.ext.sourceCompatibilityVersion
 targetCompatibility = rootProject.ext.targetCompatibilityVersion
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+publish {
+    artifactId = 'autogo-annotation'
+    userOrg = rootProject.userOrg
+    groupId = rootProject.groupId
+    uploadName = rootProject.uploadName
+    publishVersion = rootProject.publishVersion
+    desc = rootProject.description
+    website = rootProject.website
+    licences = rootProject.licences
 }

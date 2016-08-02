@@ -9,6 +9,7 @@ buildscript {
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+        classpath 'com.novoda:bintray-release:0.3.4'//plugin of publish library
     }
 }
 
@@ -24,4 +25,13 @@ task clean(type: Delete) {
 ext {
     sourceCompatibilityVersion = JavaVersion.VERSION_1_7
     targetCompatibilityVersion = JavaVersion.VERSION_1_7
+
+    //upload library setting
+    userOrg = 'tellh'
+    groupId = 'com.tellh'
+    uploadName = 'AutoGo'
+    publishVersion = '1.0.0'
+    desc = 'A library bases on compiling annotation processing'
+    website = 'https://github.com/TellH/AutoGo'
+    licences = ['Apache-2.0']
 }

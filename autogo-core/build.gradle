@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'bintray-release'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
@@ -23,5 +23,14 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile project(':autogo-annotation')
-
+}
+publish {
+    artifactId = 'autogo-core'
+    userOrg = rootProject.userOrg
+    groupId = rootProject.groupId
+    uploadName = rootProject.uploadName
+    publishVersion = rootProject.publishVersion
+    desc = rootProject.description
+    website = rootProject.website
+    licences = rootProject.licences
 }
