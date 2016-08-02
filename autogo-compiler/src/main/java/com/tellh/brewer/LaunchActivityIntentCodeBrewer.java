@@ -73,28 +73,32 @@ public class LaunchActivityIntentCodeBrewer {
                 .returns(TypeName.VOID)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-                .addStatement("intent = target.getIntent()")
                 .addStatement("this.target = ($T)target", activity)
                 .build();
         CodeBlock.Builder builder = CodeBlock.builder();
         for (IntentValueEntity valueEntity : group.getIntentValues()) {
-//            builder.addStatement("target.$L = intent.get%sExtra($S)",
+//            builder.addStatement("$T $L = intent.get%sExtra($S)",
             try {
                 builder.addStatement(ProcessorUtils.getFormatForExtra(valueEntity),
+                        valueEntity.getFieldType(),
                         valueEntity.getFieldName(),
                         valueEntity.getKey());
+                builder.beginControlFlow("if (!$T.checkNull($L))",ClassNames.CLASSUTILS,valueEntity.getFieldName())
+                        .addStatement("target.$L = $L",valueEntity.getFieldName(),valueEntity.getFieldName())
+                        .endControlFlow();
             } catch (IllegalArgumentException e) {
                 ProcessorUtils.error(mMessager, e.getMessage().toString());
                 continue;
             }
         }
         MethodSpec assign = MethodSpec.methodBuilder("assign")
-                .returns(TypeName.VOID)
+                .returns(ClassNames.INTENT)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-                .addStatement("intent=target.getIntent()")
-                .addStatement("this.target=($T)target", activity)
+                .addStatement("intent = target.getIntent()")
+                .addStatement("this.target = ($T)target", activity)
                 .addCode(builder.build())
+                .addStatement("return intent")
                 .build();
         TypeSpec AutoAssigner = TypeSpec.classBuilder(assignerName)
                 .addSuperinterface(ClassNames.AUTO_ASSIGNER)

@@ -51,60 +51,60 @@ public class ProcessorUtils {
     }
 
     public static String getFormatForExtra(final IntentValueEntity valueEntity) throws IllegalArgumentException {
-//        get$LExtra($S)
 //        "target.$L = intent.get%sExtra($S)"
+//        "$T $L = intent.get%sExtra($S)"
         TypeName fieldType = valueEntity.getFieldType();
         String key = valueEntity.getKey();
         if (fieldType.equals(TypeName.BOOLEAN)) {
-            return String.format("target.$L = intent.get%sExtra($S,false)", "Boolean");
+            return String.format("$T $L = intent.get%sExtra($S,false)", "Boolean");
         } else if (fieldType.equals(TypeName.DOUBLE)) {
-            return String.format("target.$L = intent.get%sExtra($S,%f)", "Double", 0.0);
+            return String.format("$T $L = intent.get%sExtra($S,%f)", "Double", 0.0);
         } else if (fieldType.equals(TypeName.INT)) {
-            return String.format("target.$L = intent.get%sExtra($S,%d)", "Int", 0);
+            return String.format("$T $L = intent.get%sExtra($S,%d)", "Int", 0);
         } else if (fieldType.equals(TypeName.CHAR)) {
-            return String.format("target.$L = intent.get%sExtra($S,%c)", "Char", 'a');
+            return String.format("$T $L = intent.get%sExtra($S,%c)", "Char", 'a');
         } else if (fieldType.equals(TypeName.FLOAT)) {
-            return String.format("target.$L = intent.get%sExtra($S,%f)", "Float", 0.0);
+            return String.format("$T $L = intent.get%sExtra($S,%f)", "Float", 0.0);
         } else if (fieldType.equals(TypeName.BYTE)) {
-            return String.format("target.$L = intent.get%sExtra($S,%d)", "Byte", 0);
+            return String.format("$T $L = intent.get%sExtra($S,%d)", "Byte", 0);
         } else if (fieldType.equals(TypeName.LONG)) {
-            return String.format("target.$L = intent.get%sExtra($S,%d)", "Long", 0);
+            return String.format("$T $L = intent.get%sExtra($S,%d)", "Long", 0);
         } else if (fieldType.equals(TypeName.SHORT)) {
-            return String.format("target.$L = intent.get%sExtra($S,%d)", "Short", 0);
+            return String.format("$T $L = intent.get%sExtra($S,%d)", "Short", 0);
         } else if (fieldType.equals(ClassName.get(String.class))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "String");
+            return String.format("$T $L = intent.get%sExtra($S)", "String");
         } else if (fieldType.equals(ClassName.get(CharSequence.class))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "CharSequence");
+            return String.format("$T $L = intent.get%sExtra($S)", "CharSequence");
         } else if (fieldType.equals(ClassNames.BUNDLE)) {
-            return String.format("target.$L = intent.get%sExtra($S)", "Bundle");
+            return String.format("$T $L = intent.get%sExtra($S)", "Bundle");
         } else if (fieldType.equals(ArrayTypeName.of(TypeName.BOOLEAN))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "BooleanArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "BooleanArray");
         } else if (fieldType.equals(ArrayTypeName.of(TypeName.DOUBLE))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "DoubleArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "DoubleArray");
         } else if (fieldType.equals(ArrayTypeName.of(TypeName.INT))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "IntArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "IntArray");
         } else if (fieldType.equals(ArrayTypeName.of(TypeName.CHAR))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "CharArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "CharArray");
         } else if (fieldType.equals(ArrayTypeName.of(TypeName.FLOAT))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "FloatArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "FloatArray");
         } else if (fieldType.equals(ArrayTypeName.of(TypeName.BYTE))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "ByteArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "ByteArray");
         } else if (fieldType.equals(ArrayTypeName.of(TypeName.LONG))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "LongArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "LongArray");
         } else if (fieldType.equals(ArrayTypeName.of(TypeName.SHORT))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "ShortArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "ShortArray");
         } else if (fieldType.equals(ArrayTypeName.get(String.class))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "StringArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "StringArray");
         } else if (fieldType.equals(ArrayTypeName.get(CharSequence.class))) {
-            return String.format("target.$L = intent.get%sExtra($S)", "CharSequenceArray");
+            return String.format("$T $L = intent.get%sExtra($S)", "CharSequenceArray");
         } else if (fieldType.equals(ClassNames.STRING_ARRAY_LIST)) {
-            return String.format("target.$L = intent.get%sExtra($S)", "StringArrayList");
+            return String.format("$T $L = intent.get%sExtra($S)", "StringArrayList");
         } else if (fieldType.equals(ClassNames.CHAR_SEQUENCE_ARRAY_LIST)) {
-            return String.format("target.$L = intent.get%sExtra($S)", "CharSequenceArrayList");
+            return String.format("$T $L = intent.get%sExtra($S)", "CharSequenceArrayList");
         } else if (fieldType.equals(ClassNames.INT_ARRAY_LIST)) {
-            return String.format("target.$L = intent.get%sExtra($S)", "IntArrayList");
+            return String.format("$T $L = intent.get%sExtra($S)", "IntArrayList");
         } else if (fieldType.equals(ClassNames.PARCELABLE_ARRAY_LIST)) {
-            return String.format("target.$L = intent.get%sExtra($S)", "ParcelableArrayList");
+            return String.format("$T $L = intent.get%sExtra($S)", "ParcelableArrayList");
         }
         throw new IllegalArgumentException("your type " + fieldType.toString() + " can not be used to get extra from an intent");
     }
