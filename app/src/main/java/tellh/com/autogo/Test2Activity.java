@@ -33,6 +33,12 @@ public class Test2Activity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        AutoGo.save(this);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         AutoGo.save(this);
