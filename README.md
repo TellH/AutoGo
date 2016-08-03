@@ -14,8 +14,8 @@ In app module build.gradle:
 ```
     apply plugin: 'com.neenbedankt.android-apt'
     dependencies {
-        compile 'com.tellh:autogo-core:1.0.2'
-        apt 'com.tellh:autogo-compiler:1.0.2'
+        compile 'com.tellh:autogo-core:1.0.3'
+        apt 'com.tellh:autogo-compiler:1.0.3'
     }
 ```
 
