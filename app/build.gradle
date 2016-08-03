@@ -29,6 +29,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
-    compile project(':autogo-core')
-    apt project(':autogo-compiler')
+    compile 'com.tellh:autogo-core:1.0.2'
+    apt 'com.tellh:autogo-compiler:1.0.2'
 }
