@@ -3,7 +3,7 @@ package com.tellh.processor;
 import com.autogo.annotation.IntentValue;
 import com.autogo.annotation.SharePrefs;
 import com.google.auto.service.AutoService;
-import com.tellh.brewer.AutoGoCodeBrewer;
+import com.tellh.brewer.AutoGoClassCodeBrewer;
 import com.tellh.utils.Utils;
 
 import java.io.IOException;
@@ -28,7 +28,8 @@ public class AutoGoProcessor extends AbstractProcessor {
     private Messager mMessager;
     private IntentValueHandler intentValueHandler;
     private SharePrefsHandler sharePrefsHandler;
-    private AutoGoCodeBrewer.Builder autoGoBrewerBuilder;
+    private BundleHandler bundleHandler;
+    private AutoGoClassCodeBrewer.Builder autoGoBrewerBuilder;
     private static boolean generated = false;
 
     @Override
@@ -36,9 +37,10 @@ public class AutoGoProcessor extends AbstractProcessor {
         super.init(processingEnv);
         mFileUtils = processingEnv.getFiler();
         mMessager = processingEnv.getMessager();
-        autoGoBrewerBuilder = AutoGoCodeBrewer.builder(mFileUtils);
+        autoGoBrewerBuilder = AutoGoClassCodeBrewer.builder(mFileUtils);
         intentValueHandler = new IntentValueHandler(processingEnv);
         sharePrefsHandler = new SharePrefsHandler(processingEnv);
+        bundleHandler = new BundleHandler(processingEnv);
     }
 
     @Override
@@ -59,6 +61,7 @@ public class AutoGoProcessor extends AbstractProcessor {
         //Take note, this method could be invoke several times during compiling.
         intentValueHandler.handle(roundEnv, autoGoBrewerBuilder);
         sharePrefsHandler.handle(roundEnv, autoGoBrewerBuilder);
+        bundleHandler.handle(roundEnv,autoGoBrewerBuilder);
         try {
             if (generated)
                 return true;

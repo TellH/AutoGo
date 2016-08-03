@@ -1,10 +1,10 @@
 package com.tellh.processor;
 
-import com.autogo.annotation.IntentValue;
+import com.autogo.annotation.Bundle;
 import com.tellh.brewer.AutoGoClassCodeBrewer;
 import com.tellh.brewer.CodeBrewer;
-import com.tellh.brewer.LaunchActivityIntentCodeBrewer;
-import com.tellh.entity.IntentKeyValueEntity;
+import com.tellh.brewer.BundleCodeBrewer;
+import com.tellh.entity.BundleKeyValueEntity;
 import com.tellh.entity.KeyValueEntity;
 import com.tellh.entity.KeyValueGroup;
 
@@ -17,30 +17,29 @@ import javax.lang.model.element.VariableElement;
 /**
  * Created by tlh on 2016/8/2.
  */
-public class IntentValueHandler extends BaseAnnotationHandler {
+public class BundleHandler extends BaseAnnotationHandler {
 
-    public IntentValueHandler(ProcessingEnvironment processingEnv) {
+    public BundleHandler(ProcessingEnvironment processingEnv) {
         super(processingEnv);
     }
 
     @Override
     protected CodeBrewer newCodeBrewer() {
-        return new LaunchActivityIntentCodeBrewer(mFileUtils, mElementUtils, mMessager);
+        return new BundleCodeBrewer(mFileUtils,mElementUtils,mMessager);
     }
 
     @Override
     protected void buildAutoGoBrewer(AutoGoClassCodeBrewer.Builder autoGoBrewerBuilder, List<KeyValueGroup> targets) {
-        autoGoBrewerBuilder.launchActivityMethods(targets);
+        autoGoBrewerBuilder.instancceStateTargets(targets);
     }
 
     @Override
     protected KeyValueEntity getKeyValueEntity(VariableElement variableElement) {
-        return new IntentKeyValueEntity(variableElement);
+        return new BundleKeyValueEntity(variableElement);
     }
 
     @Override
     protected Class<? extends Annotation> getAnnotationClass() {
-        return IntentValue.class;
+        return Bundle.class;
     }
-
 }

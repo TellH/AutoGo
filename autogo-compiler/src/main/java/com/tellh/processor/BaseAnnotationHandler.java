@@ -1,7 +1,7 @@
 package com.tellh.processor;
 
 import com.autogo.annotation.IntentValue;
-import com.tellh.brewer.AutoGoCodeBrewer;
+import com.tellh.brewer.AutoGoClassCodeBrewer;
 import com.tellh.brewer.CodeBrewer;
 import com.tellh.entity.KeyValueEntity;
 import com.tellh.entity.KeyValueGroup;
@@ -31,7 +31,7 @@ public abstract class BaseAnnotationHandler {
     protected Elements mElementUtils;
     protected Messager mMessager;
     protected Map<String, KeyValueGroup> mClassifyMap;
-    protected AutoGoCodeBrewer.Builder autoGoBrewerBuilder;
+    protected AutoGoClassCodeBrewer.Builder autoGoBrewerBuilder;
     protected CodeBrewer codeBrewer;
 
     public BaseAnnotationHandler(ProcessingEnvironment processingEnv) {
@@ -44,7 +44,7 @@ public abstract class BaseAnnotationHandler {
 
     protected abstract CodeBrewer newCodeBrewer();
 
-    public boolean handle(RoundEnvironment roundEnv, AutoGoCodeBrewer.Builder autoGoBrewerBuilder) {
+    public boolean handle(RoundEnvironment roundEnv, AutoGoClassCodeBrewer.Builder autoGoBrewerBuilder) {
         mClassifyMap.clear();
         if (!gatherInformation(roundEnv)) return false;
         if (!mClassifyMap.isEmpty()) {
@@ -84,7 +84,7 @@ public abstract class BaseAnnotationHandler {
         return true;
     }
 
-    protected abstract void buildAutoGoBrewer(AutoGoCodeBrewer.Builder autoGoBrewerBuilder, List<KeyValueGroup> targets);
+    protected abstract void buildAutoGoBrewer(AutoGoClassCodeBrewer.Builder autoGoBrewerBuilder, List<KeyValueGroup> targets);
 
     protected abstract KeyValueEntity getKeyValueEntity(VariableElement variableElement);
 

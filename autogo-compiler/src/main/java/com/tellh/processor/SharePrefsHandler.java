@@ -1,7 +1,7 @@
 package com.tellh.processor;
 
 import com.autogo.annotation.SharePrefs;
-import com.tellh.brewer.AutoGoCodeBrewer;
+import com.tellh.brewer.AutoGoClassCodeBrewer;
 import com.tellh.brewer.CodeBrewer;
 import com.tellh.brewer.SharePrefsCodeBrewer;
 import com.tellh.entity.KeyValueEntity;
@@ -29,7 +29,7 @@ public class SharePrefsHandler extends BaseAnnotationHandler {
     }
 
     @Override
-    protected void buildAutoGoBrewer(AutoGoCodeBrewer.Builder autoGoBrewerBuilder, List<KeyValueGroup> targets) {
+    protected void buildAutoGoBrewer(AutoGoClassCodeBrewer.Builder autoGoBrewerBuilder, List<KeyValueGroup> targets) {
         autoGoBrewerBuilder.sharePrefsTargets(targets);
     }
 

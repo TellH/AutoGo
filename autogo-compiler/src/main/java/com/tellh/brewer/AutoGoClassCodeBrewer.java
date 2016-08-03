@@ -19,7 +19,7 @@ import javax.lang.model.element.Modifier;
 /**
  * Created by tlh on 2016/8/2.
  */
-public class AutoGoCodeBrewer {
+public class AutoGoClassCodeBrewer {
     public static Builder builder(Filer filer) {
         return new Builder(filer);
     }
@@ -28,6 +28,7 @@ public class AutoGoCodeBrewer {
         private Filer mFileUtils;
         List<KeyValueGroup> launchTargets;
         List<KeyValueGroup> sharePrefsTargets;
+        List<KeyValueGroup> bundleTargets;
 
         public Builder(Filer filer) {
             mFileUtils = filer;
@@ -40,6 +41,11 @@ public class AutoGoCodeBrewer {
 
         public Builder sharePrefsTargets(List<KeyValueGroup> targets) {
             this.sharePrefsTargets = targets;
+            return this;
+        }
+
+        public Builder instancceStateTargets(List<KeyValueGroup> targets) {
+            this.bundleTargets = targets;
             return this;
         }
 
@@ -68,67 +74,51 @@ public class AutoGoCodeBrewer {
                     launchActivityMethods.add(launchMethod);
                 }
             }
-            CodeBlock.Builder putToSharedPrefsAssistantMapBuilder = CodeBlock.builder();
+            CodeBlock.Builder staticCodeBuilder = CodeBlock.builder();
+            staticCodeBuilder.addStatement("assistantManager = $T.getInstance()",ClassNames.AUTO_ASSISTANT_MANAGER);
             if (sharePrefsTargets != null) {
                 for (KeyValueGroup sharePrefsTarget : sharePrefsTargets) {
-                    putToSharedPrefsAssistantMapBuilder
-                            .addStatement("sharedPrefsAssistantMap.put($S, new $T())",
-                                    sharePrefsTarget.getPackageName(),
-                                    ClassName.get(sharePrefsTarget.getPackageName(),sharePrefsTarget.getSimpleClassName()+"_AutoSharePrefsAssistant"));
+                    staticCodeBuilder
+                            .addStatement("assistantManager.addSharePrefsAssistant($S, new $T())",
+                                    sharePrefsTarget.getClassName(),
+                                    ClassName.get(sharePrefsTarget.getPackageName(), sharePrefsTarget.getSimpleClassName() + "_AutoSharePrefsAssistant"));
+                }
+            }
+            if (bundleTargets != null) {
+                for (KeyValueGroup bundleTarget : bundleTargets) {
+                    staticCodeBuilder
+                            .addStatement("assistantManager.addBundleAssistant($S, new $T())",
+                                    bundleTarget.getClassName(),
+                                    ClassName.get(bundleTarget.getPackageName(), bundleTarget.getSimpleClassName() + "_AutoBundleAssistant"));
                 }
             }
             MethodSpec save = MethodSpec.methodBuilder("save")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addParameter(ClassNames.CONTEXT, "context")
-                    .beginControlFlow("if (context == null)")
-                    .addStatement("return")
-                    .endControlFlow()
-                    .addStatement("initSharedPrefsAssistantMap()")
-                    .beginControlFlow("try")
-                    .addStatement("getSharedPrefsAssistant(context).save()")
-                    .endControlFlow()
-                    .beginControlFlow("catch ($T e)", Exception.class)
-                    .addStatement("Log.d($S, e.getMessage())", "AutoGo")
-                    .endControlFlow()
+                    .addStatement("assistantManager.save(context)")
+                    .build();
+            MethodSpec saveWithBundle = MethodSpec.methodBuilder("save")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addParameter(ClassNames.CONTEXT, "context")
+                    .addParameter(ClassNames.BUNDLE, "bundle")
+                    .addStatement("assistantManager.save(context,bundle)")
                     .build();
             MethodSpec restore = MethodSpec.methodBuilder("restore")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addParameter(ClassNames.CONTEXT, "context")
-                    .beginControlFlow("if (context == null)")
-                    .addStatement("return")
-                    .endControlFlow()
-                    .addStatement("initSharedPrefsAssistantMap()")
-                    .beginControlFlow("try")
-                    .addStatement("getSharedPrefsAssistant(context).restore()")
-                    .endControlFlow()
-                    .beginControlFlow("catch ($T e)", Exception.class)
-                    .addStatement("Log.d($S, e.getMessage())", "AutoGo")
-                    .endControlFlow()
+                    .addStatement("assistantManager.restore(context)")
                     .build();
-            MethodSpec initSharedPrefsAssistantMap = MethodSpec.methodBuilder("initSharedPrefsAssistantMap")
-                    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                    .beginControlFlow("if (sharedPrefsAssistantMap == null)")
-                    .addStatement("sharedPrefsAssistantMap = new HashMap<>()")
-                    .addCode(putToSharedPrefsAssistantMapBuilder.build())
-                    .endControlFlow()
-                    .build();
-            MethodSpec getSharedPrefsAssistant = MethodSpec.methodBuilder("getSharedPrefsAssistant")
-                    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+            MethodSpec restoreWithBundle = MethodSpec.methodBuilder("restore")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addParameter(ClassNames.CONTEXT, "context")
-                    .returns(ClassNames.AUTO_SHARE_PREFS_ASSISTANT)
-                    .addStatement("String className = context.getClass().getName()")
-                    .addStatement("$T handler = sharedPrefsAssistantMap.get(className)", ClassNames.AUTO_SHARE_PREFS_ASSISTANT)
-                    .beginControlFlow("if (handler == null)")
-                    .addStatement("throw new $T($S)", NullPointerException.class, "your target field members don't have any @SharePerfs.")
-                    .endControlFlow()
-                    .addStatement("handler.setTarget(context)")
-                    .addStatement("return handler")
+                    .addParameter(ClassNames.BUNDLE, "bundle")
+                    .addStatement("assistantManager.restore(context,bundle)")
                     .build();
             FieldSpec autoAssignerMap = FieldSpec.builder(ClassNames.MAP_ASSIGNER, "autoAssignerMap")
                     .addModifiers(Modifier.STATIC, Modifier.PRIVATE)
                     .initializer("new $T<>()", HashMap.class)
                     .build();
-            FieldSpec sharedPrefsAssistantMap = FieldSpec.builder(ClassNames.MAP_SHARE_PREFS_ASSISTANT, "sharedPrefsAssistantMap")
+            FieldSpec assistantManager = FieldSpec.builder(ClassNames.AUTO_ASSISTANT_MANAGER, "assistantManager")
                     .addModifiers(Modifier.STATIC, Modifier.PRIVATE)
                     .build();
             TypeSpec ActivityLauncherManager = TypeSpec.classBuilder("ActivityLauncherManager")
@@ -160,23 +150,16 @@ public class AutoGoCodeBrewer {
                     .addStatement("return new ActivityLauncherManager(activity)")
                     .build();
             MethodSpec assign = MethodSpec.methodBuilder("assign")
-                    .returns(boolean.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addException(RuntimeException.class)
                     .addParameter(ClassNames.ACTIVITY, "activity")
-                    .beginControlFlow("try")
                     .addStatement("getAssigner(activity).assign()")
-                    .endControlFlow()
-                    .beginControlFlow("catch (IllegalArgumentException e)")
-                    .addStatement("$T.e($S, e.getMessage())", ClassNames.LOG, "AutoGo")
-                    .addStatement("return false")
-                    .endControlFlow()
-                    .addStatement("return true")
                     .build();
             MethodSpec getAssigner = MethodSpec.methodBuilder("getAssigner")
                     .returns(ClassNames.AUTO_ASSIGNER)
                     .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                     .addParameter(ClassNames.ACTIVITY, "activity")
-                    .addException(IllegalArgumentException.class)
+                    .addException(RuntimeException.class)
                     .addStatement("String className = activity.getClass().getName()")
                     .addStatement("$T autoAssigner = autoAssignerMap.get(className)", ClassNames.AUTO_ASSIGNER)
                     .beginControlFlow("if (autoAssigner == null)")
@@ -187,15 +170,16 @@ public class AutoGoCodeBrewer {
                     .build();
             classBuilder
                     .addField(autoAssignerMap)
-                    .addField(sharedPrefsAssistantMap)
+                    .addField(assistantManager)
+                    .addStaticBlock(staticCodeBuilder.build())
+                    .addType(ActivityLauncherManager)
                     .addMethod(from)
                     .addMethod(assign)
                     .addMethod(getAssigner)
-                    .addMethod(initSharedPrefsAssistantMap)
                     .addMethod(save)
                     .addMethod(restore)
-                    .addMethod(getSharedPrefsAssistant)
-                    .addType(ActivityLauncherManager)
+                    .addMethod(saveWithBundle)
+                    .addMethod(restoreWithBundle)
                     .build();
         }
     }
