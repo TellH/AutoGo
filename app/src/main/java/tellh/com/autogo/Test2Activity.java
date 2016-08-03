@@ -15,7 +15,7 @@ import autogo.AutoGo;
 public class Test2Activity extends AppCompatActivity {
 
     @BundleValue
-    Long activityLaunchTime;
+    long activityLaunchTime;
     @SharePrefs
     String desc;
     @SharePrefs

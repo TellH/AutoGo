@@ -30,7 +30,7 @@ ext {
     userOrg = 'tellh'
     groupId = 'com.tellh'
     uploadName = 'AutoGo'
-    publishVersion = '1.0.2'
+    publishVersion = '1.0.3'
     desc = 'A library bases on compiling annotation processing'
     website = 'https://github.com/TellH/AutoGo'
     licences = ['Apache-2.0']
