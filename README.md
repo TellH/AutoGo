@@ -36,7 +36,7 @@ Then make project(Ctrl+F9).<br>
 Now, in your SrcActivity you can start the TargetActivity just like this:
 ```
         AutoGo.from(SrcActivity.this)
-                .gotoTestActivity()
+                .gotoTargetActivity()
                 .age(18)
                 .myName("tlh")
                 .friends(friends)
