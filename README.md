@@ -33,7 +33,7 @@ public class TargetActivity extends AppCompatActivity {
 }
 ```
 Then make project(Ctrl+F9).<br>
-Now, in your SrcActivity can start the TargetActivity just like this:
+Now, in your SrcActivity you can start the TargetActivity just like this:
 ```
         AutoGo.from(SrcActivity.this)
                 .gotoTestActivity()
