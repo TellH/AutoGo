@@ -60,4 +60,13 @@ public class Utils {
             return true;
         return false;
     }
+
+    public static String withoutGenericType(String src) {
+        StringBuilder builder = new StringBuilder(src);
+        int left = builder.indexOf("<");
+        if (left == -1)
+            return builder.toString();
+        int right = builder.indexOf(">", left);
+        return builder.delete(left, right + 1).toString();
+    }
 }

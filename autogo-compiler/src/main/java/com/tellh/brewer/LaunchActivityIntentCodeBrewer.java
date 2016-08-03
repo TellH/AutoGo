@@ -9,6 +9,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.tellh.entity.KeyValueEntity;
 import com.tellh.entity.KeyValueGroup;
 import com.tellh.utils.ClassNames;
+import com.tellh.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,9 +53,7 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
                 .build();
         CodeBlock.Builder builder = CodeBlock.builder();
         for (KeyValueEntity valueEntity : group.getIntentValues()) {
-            builder.addStatement("target.$L= ($T) $T.getData(intent,$S,target.$L)",
-                    valueEntity.getFieldName(),valueEntity.getFieldType(),
-                    ClassNames.INTENT_UTILS,valueEntity.getKey(),valueEntity.getFieldName());
+            makeGetDataBlock(valueEntity, builder);
         }
         MethodSpec assign = MethodSpec.methodBuilder("assign")
                 .returns(ClassNames.INTENT)
@@ -76,6 +75,25 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
                 .build();
         brewJavaFile(group.getPackageName(), AutoAssigner, mFileUtils);
     }
+
+    private CodeBlock.Builder makeGetDataBlock(KeyValueEntity entity, CodeBlock.Builder builder) {
+        if (entity.getFieldType().isPrimitive()) {
+            builder.addStatement("target.$L = ($T) $T.getData(intent,$S, target.$L)", entity.getFieldName(),
+                    entity.getFieldType(), ClassNames.INTENT_UTILS, entity.getKey(), entity.getFieldName());
+            return builder;
+        }
+        builder.beginControlFlow("if (target.$L==null)", entity.getFieldName())
+                .addStatement("target.$L = ($T) $T.getData(intent,$S,$L.class, target.$L)",
+                        entity.getFieldName(), entity.getFieldType(), ClassNames.INTENT_UTILS,
+                        entity.getKey(), Utils.withoutGenericType(entity.getFieldType().toString()), entity.getFieldName())
+                .endControlFlow()
+                .beginControlFlow("else")
+                .addStatement("target.$L = ($T) $T.getData(intent,$S, target.$L)", entity.getFieldName(),
+                        entity.getFieldType(), ClassNames.INTENT_UTILS, entity.getKey(), entity.getFieldName())
+                .endControlFlow();
+        return builder;
+    }
+
     private void brewAutoLauncher(KeyValueGroup group) throws IOException, IllegalArgumentException {
         ClassName activity = ClassName.get(group.getPackageName(), group.getSimpleClassName());
         ClassName launcherName = ClassName.get(group.getPackageName(), group.getSimpleClassName() + "_AutoLauncher");
@@ -137,5 +155,4 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
                 .build();
         brewJavaFile(group.getPackageName(), AutoLauncher, mFileUtils);
     }
-
 }

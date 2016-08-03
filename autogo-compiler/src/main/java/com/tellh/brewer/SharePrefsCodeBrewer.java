@@ -51,16 +51,15 @@ public class SharePrefsCodeBrewer extends CodeBrewer {
         StringBuilder savaDataStatements=new StringBuilder("SharedPreferencesUtils.getInstance(target).editor()");
         for (KeyValueEntity valueEntity : group.getIntentValues()) {
             TypeName fieldType = valueEntity.getFieldType();
-            String getDataStatement;
             if (Utils.isData(fieldType)){
-                getDataStatement="target.$L = ($T) utils.getData($S, target.$L)";
+                makeGetDataBlock(valueEntity,builder);
             }else {
                 if (fieldType.isPrimitive())
                     continue;
-                getDataStatement="target.$L = ($T) utils.getObject($S, target.$L)";
+                builder.addStatement("target.$L = ($T) utils.getObject($S, target.$L)",
+                        valueEntity.getFieldName(),valueEntity.getFieldType(),valueEntity.getKey(),valueEntity.getFieldName());
             }
             savaDataStatements.append(String.format(".saveData(\"%s\", target.%s)",valueEntity.getKey(),valueEntity.getFieldName()));
-            builder.addStatement(getDataStatement,valueEntity.getFieldName(),valueEntity.getFieldType(),valueEntity.getKey(),valueEntity.getFieldName());
         }
         savaDataStatements.append(".commit()");
         MethodSpec restore = MethodSpec.methodBuilder("restore")
@@ -94,5 +93,18 @@ public class SharePrefsCodeBrewer extends CodeBrewer {
                 .addMethod(restore)
                 .build();
         brewJavaFile(group.getPackageName(), AutoSharePrefsAssistant, mFileUtils);
+    }
+    private CodeBlock.Builder makeGetDataBlock(KeyValueEntity entity,CodeBlock.Builder builder){
+        builder.beginControlFlow("if (target.$L==null)",entity.getFieldName())
+                .addStatement("target.$L = ($T) utils.getData($S,$L.class, target.$L)",
+                        entity.getFieldName(),entity.getFieldType(),entity.getKey(),
+                        Utils.withoutGenericType(entity.getFieldType().toString()),
+                        entity.getFieldName())
+                .endControlFlow()
+                .beginControlFlow("else")
+                .addStatement("target.$L = ($T) utils.getData($S, target.$L)",entity.getFieldName(),
+                        entity.getFieldType(),entity.getKey(),entity.getFieldName())
+                .endControlFlow();
+        return builder;
     }
 }

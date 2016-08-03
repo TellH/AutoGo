@@ -37,7 +37,11 @@ public class BundleUtils {
     }
 
     public static Object getData(Bundle bundle, String key, Object defValue) {
-        String type = defValue.getClass().getSimpleName();
+        return getData(bundle, key, defValue.getClass(),defValue);
+    }
+
+    public static Object getData(Bundle bundle, String key, Class clz, Object defValue) {
+        String type = clz.getSimpleName();
         if ("Integer".equals(type)) {
             return bundle.getInt(key, (Integer) defValue);
         } else if ("Boolean".equals(type)) {
@@ -49,19 +53,24 @@ public class BundleUtils {
         } else if ("Long".equals(type)) {
             return bundle.getLong(key, (Long) defValue);
         } else if ("Int[]".equals(type)) {
-            return bundle.getIntArray(key);
+            return checkNull(bundle.getIntArray(key),defValue);
         } else if ("boolean[]".equals(type)) {
-            return bundle.getBooleanArray(key);
+            return checkNull(bundle.getBooleanArray(key),defValue);
         } else if ("String[]".equals(type)) {
-            return bundle.getStringArray(key);
+            return checkNull(bundle.getStringArray(key),defValue);
         } else if ("float[]".equals(type)) {
-            return bundle.getFloatArray(key);
+            return checkNull(bundle.getFloatArray(key),defValue);
         } else if ("long[]".equals(type)) {
-            return bundle.getLongArray(key);
+            return checkNull(bundle.getLongArray(key),defValue);
         } else if ("ArrayList".equals(type)) {
             //I don't want to get the generic type via reflection, so I use String.class as the default type.
-            return bundle.getStringArrayList(key);
+            return checkNull(bundle.getStringArrayList(key),defValue);
         }
         return null;
+    }
+    private static Object checkNull(Object extra, Object defValue) {
+        if (extra == null)
+            return defValue;
+        return extra;
     }
 }

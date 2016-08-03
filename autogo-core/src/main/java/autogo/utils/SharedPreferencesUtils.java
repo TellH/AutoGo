@@ -57,7 +57,10 @@ public class SharedPreferencesUtils {
 
     }
     public Object getData(String key, Object defValue) {
-        String type = defValue.getClass().getSimpleName();
+        return getData(key,defValue.getClass(),defValue);
+    }
+    public Object getData(String key,Class clz, Object defValue) {
+        String type = clz.getSimpleName();
         if ("Integer".equals(type)) {
             return mSharedPreferences.getInt(key, (Integer) defValue);
         } else if ("Boolean".equals(type)) {
@@ -86,7 +89,6 @@ public class SharedPreferencesUtils {
             return def;
         }
     }
-
     public static void setSaveTag(String tag, Context context) {
         if (TextUtils.isEmpty(tag))
             return;

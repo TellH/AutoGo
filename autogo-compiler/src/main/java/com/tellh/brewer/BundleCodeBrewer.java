@@ -9,6 +9,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.tellh.entity.KeyValueEntity;
 import com.tellh.entity.KeyValueGroup;
 import com.tellh.utils.ClassNames;
+import com.tellh.utils.Utils;
 
 import java.io.IOException;
 
@@ -90,16 +91,31 @@ public class BundleCodeBrewer extends CodeBrewer {
     private CodeBlock getBundleUtilCodeBlock(String type, KeyValueGroup group) {
         CodeBlock.Builder builder = CodeBlock.builder();
         for (KeyValueEntity valueEntity : group.getIntentValues()) {
-            TypeName fieldType = valueEntity.getFieldType();
             if (type.equals("get")) {
-                builder.addStatement(String.format("target.$L = ($T)$T.%sData(bundle, $S, target.$L)",type),valueEntity.getFieldName(),
-                        valueEntity.getFieldType(), ClassNames.BUNDLE_UTILS, valueEntity.getKey(), valueEntity.getFieldName());
+                makeGetDataBlock(valueEntity, builder);
             } else {
-
-                builder.addStatement(String.format("$T.%sData(bundle, $S, target.$L)", type),
+                builder.addStatement("$T.saveData(bundle, $S, target.$L)",
                         ClassNames.BUNDLE_UTILS, valueEntity.getKey(), valueEntity.getFieldName());
             }
         }
         return builder.build();
+    }
+
+    private CodeBlock.Builder makeGetDataBlock(KeyValueEntity entity, CodeBlock.Builder builder) {
+        if (entity.getFieldType().isPrimitive()) {
+            builder.addStatement("target.$L = ($T)$T.getData(bundle, $S, target.$L)", entity.getFieldName(),
+                    entity.getFieldType(), ClassNames.BUNDLE_UTILS, entity.getKey(), entity.getFieldName());
+            return builder;
+        }
+        builder.beginControlFlow("if (target.$L==null)", entity.getFieldName())
+                .addStatement("target.$L = ($T) $T.getData(bundle,$S,$L.class, target.$L)",
+                        entity.getFieldName(), entity.getFieldType(), ClassNames.BUNDLE_UTILS,
+                        entity.getKey(), Utils.withoutGenericType(entity.getFieldType().toString()), entity.getFieldName())
+                .endControlFlow()
+                .beginControlFlow("else")
+                .addStatement("target.$L = ($T)$T.getData(bundle,$S, target.$L)", entity.getFieldName(),
+                        entity.getFieldType(), ClassNames.BUNDLE_UTILS, entity.getKey(), entity.getFieldName())
+                .endControlFlow();
+        return builder;
     }
 }

@@ -8,7 +8,11 @@ import android.os.Parcelable;
  */
 public class IntentUtils {
     public static Object getData(Intent intent, String key, Object defValue) {
-        String type = defValue.getClass().getSimpleName();
+        return getData(intent, key, defValue.getClass(), defValue);
+    }
+
+    public static Object getData(Intent intent, String key, Class clz, Object defValue) {
+        String type = clz.getSimpleName();
         if ("Integer".equals(type)) {
             return intent.getIntExtra(key, (Integer) defValue);
         } else if ("Boolean".equals(type)) {
