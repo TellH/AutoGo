@@ -1,6 +1,6 @@
 package com.tellh.processor;
 
-import com.autogo.annotation.Bundle;
+import com.autogo.annotation.BundleValue;
 import com.tellh.brewer.AutoGoClassCodeBrewer;
 import com.tellh.brewer.CodeBrewer;
 import com.tellh.brewer.BundleCodeBrewer;
@@ -40,6 +40,6 @@ public class BundleHandler extends BaseAnnotationHandler {
 
     @Override
     protected Class<? extends Annotation> getAnnotationClass() {
-        return Bundle.class;
+        return BundleValue.class;
     }
 }

@@ -1,6 +1,6 @@
 package com.tellh.entity;
 
-import com.autogo.annotation.Bundle;
+import com.autogo.annotation.BundleValue;
 
 import javax.lang.model.element.VariableElement;
 
@@ -14,7 +14,7 @@ public class BundleKeyValueEntity extends KeyValueEntity {
 
     @Override
     protected void initKey() {
-        Bundle annotation = mElement.getAnnotation(Bundle.class);
+        BundleValue annotation = mElement.getAnnotation(BundleValue.class);
         mKey = annotation.value();
         if (mKey == null || mKey.equals(""))
             mKey = mElement.getSimpleName().toString();

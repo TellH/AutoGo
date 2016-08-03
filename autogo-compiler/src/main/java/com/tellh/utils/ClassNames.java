@@ -8,10 +8,11 @@ import com.squareup.javapoet.ParameterizedTypeName;
  */
 public class ClassNames {
     public static final ClassName ACTIVITY = ClassName.get("android.app", "Activity");
-    public static final ClassName LOG = ClassName.get("android.util", "Log");
+    public static final ClassName PARCELABLE = ClassName.get("android.os", "Parcelable");
     public static final ClassName CONTEXT = ClassName.get("android.content", "Context");
     public static final ClassName CLASSUTILS = ClassName.get("autogo.utils", "ClassUtils");
     public static final ClassName BUNDLE_UTILS = ClassName.get("autogo.utils", "BundleUtils");
+    public static final ClassName INTENT_UTILS = ClassName.get("autogo.utils", "IntentUtils");
     public static final ClassName AUTO_STORAGE_ASSISTANT = ClassName.get("autogo.internal", "AutoStorageAssistant");
     public static final ClassName AUTO_ASSIGNER = ClassName.get("autogo.internal", "AutoAssigner");
     public static final ClassName AUTO_LAUNCHER = ClassName.get("autogo.internal", "AutoLauncher");

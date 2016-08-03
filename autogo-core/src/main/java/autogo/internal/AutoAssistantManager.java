@@ -65,7 +65,7 @@ public final class AutoAssistantManager {
         String className = context.getClass().getName();
         AutoStorageAssistant handler = bundleAssistants.get(className);
         if (handler == null) {
-            throw new RuntimeException("your target field members don't have any @Bundle.");
+            throw new RuntimeException("your target field members don't have any @BundleValue.");
         }
         handler.setTarget(context);
         handler.setBundle(bundle);
@@ -80,7 +80,7 @@ public final class AutoAssistantManager {
         String className = context.getClass().getName();
         AutoStorageAssistant handler = bundleAssistants.get(className);
         if (handler == null) {
-            throw new RuntimeException("your target field members don't have any @Bundle.");
+            throw new RuntimeException("your target field members don't have any @BundleValue.");
         }
         handler.setTarget(context);
         handler.setBundle(bundle);

@@ -9,7 +9,6 @@ import com.squareup.javapoet.TypeSpec;
 import com.tellh.entity.KeyValueEntity;
 import com.tellh.entity.KeyValueGroup;
 import com.tellh.utils.ClassNames;
-import com.tellh.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,26 +52,9 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
                 .build();
         CodeBlock.Builder builder = CodeBlock.builder();
         for (KeyValueEntity valueEntity : group.getIntentValues()) {
-//            builder.addStatement("$T $L = intent.get%sExtra($S)",
-            try {
-                if (valueEntity.getFieldType().isPrimitive()){
-                    builder.addStatement(Utils.getFormatForExtra(valueEntity),
-                            valueEntity.getFieldName(),
-                            valueEntity.getKey(),
-                            valueEntity.getFieldName());
-                }else {
-                    builder.addStatement(Utils.getFormatForExtra(valueEntity),
-                            valueEntity.getFieldType(),
-                            valueEntity.getFieldName(),
-                            valueEntity.getKey());
-                    builder.beginControlFlow("if (!$T.checkNull($L))",ClassNames.CLASSUTILS,valueEntity.getFieldName())
-                            .addStatement("target.$L = $L",valueEntity.getFieldName(),valueEntity.getFieldName())
-                            .endControlFlow();
-                }
-            } catch (IllegalArgumentException e) {
-                Utils.error(mMessager, e.getMessage().toString());
-                continue;
-            }
+            builder.addStatement("target.$L= ($T) $T.getData(intent,$S,target.$L)",
+                    valueEntity.getFieldName(),valueEntity.getFieldType(),
+                    ClassNames.INTENT_UTILS,valueEntity.getKey(),valueEntity.getFieldName());
         }
         MethodSpec assign = MethodSpec.methodBuilder("assign")
                 .returns(ClassNames.INTENT)
@@ -134,10 +116,10 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
             } else if (fieldType.equals(ClassNames.PARCELABLE_ARRAY_LIST)) {
                 builder.addStatement("intent.putParcelableArrayListExtra($S,value)", valueEntity.getKey());
             } else {
-                if (!Utils.checkFieldType(fieldType)) {
-                    Utils.error(mMessager, "your value type :" + fieldType + " do not allow to put into an intent object.");
-                    continue;
-                }
+//                if (!Utils.checkFieldType(fieldType)) {
+//                    Utils.error(mMessager, "your value type :" + fieldType + " do not allow to put into an intent object.");
+//                    continue;
+//                }
                 builder.addStatement("intent.putExtra($S,value)", valueEntity.getKey());
             }
             builder.addStatement("return this");

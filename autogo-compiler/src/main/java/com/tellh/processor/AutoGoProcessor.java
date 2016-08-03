@@ -1,5 +1,6 @@
 package com.tellh.processor;
 
+import com.autogo.annotation.BundleValue;
 import com.autogo.annotation.IntentValue;
 import com.autogo.annotation.SharePrefs;
 import com.google.auto.service.AutoService;
@@ -48,6 +49,7 @@ public class AutoGoProcessor extends AbstractProcessor {
         Set<String> annotationTypes = new LinkedHashSet<>();
         annotationTypes.add(IntentValue.class.getCanonicalName());
         annotationTypes.add(SharePrefs.class.getCanonicalName());
+        annotationTypes.add(BundleValue.class.getCanonicalName());
         return annotationTypes;
     }
 
