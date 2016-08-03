@@ -14,8 +14,8 @@ In app module build.gradle:
 ```
     apply plugin: 'com.neenbedankt.android-apt'
     dependencies {
-        compile 'com.tellh:autogo-core:1.0.1'
-        apt 'com.tellh:autogo-compiler:1.0.1'
+        compile 'com.tellh:autogo-core:1.0.2'
+        apt 'com.tellh:autogo-compiler:1.0.2'
     }
 ```
 
@@ -69,9 +69,9 @@ Then whenever your want to restore the data to assign the field in your class, j
         AutoGo.restore(this);
 ```
 - Save and restore data with Bundle in the awesome way.<br>
-Use @Bundle to annotate the fields of your class :
+Use @BundleValue to annotate the fields of your class :
 ```
-    @Bundle
+    @BundleValue
     Long activityLaunchTime;
 ```
 Whenever you want to sava the data, just Call:
