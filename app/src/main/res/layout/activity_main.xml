@@ -7,11 +7,18 @@
     tools:context="tellh.com.autogo.MainActivity">
 
     <Button
-        android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onClickGo"
-        android:text="Go !" />
+        android:text="Go !"
+        android:textSize="18sp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickGoForResult"
+        android:text="Go_For_Result !"
+        android:textSize="18sp" />
 
     <Button
         android:layout_width="match_parent"

@@ -41,9 +41,6 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
         FieldSpec srcActivity = FieldSpec.builder(activity, "target")
                 .addModifiers(Modifier.PRIVATE)
                 .build();
-        FieldSpec intent = FieldSpec.builder(ClassNames.INTENT, "intent")
-                .addModifiers(Modifier.PRIVATE)
-                .build();
         MethodSpec setTarget = MethodSpec.methodBuilder("setTarget")
                 .addParameter(ClassNames.ACTIVITY, "target")
                 .returns(TypeName.VOID)
@@ -56,10 +53,10 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
             makeGetDataBlock(valueEntity, builder);
         }
         MethodSpec assign = MethodSpec.methodBuilder("assign")
-                .returns(ClassNames.INTENT)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-                .addStatement("intent = target.getIntent()")
+                .returns(ClassNames.INTENT)
+                .addStatement("Intent intent = target.getIntent()")
                 .addStatement("this.target = ($T)target", activity)
                 .addCode(builder.build())
                 .addStatement("target = null")
@@ -69,7 +66,6 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
                 .addSuperinterface(ClassNames.AUTO_ASSIGNER)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addField(srcActivity)
-                .addField(intent)
                 .addMethod(setTarget)
                 .addMethod(assign)
                 .build();
@@ -117,6 +113,25 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
                 .addStatement("intent = null")
                 .addStatement("srcActivity = null")
                 .build();
+        MethodSpec goForResult = MethodSpec.methodBuilder("goForResult")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .returns(TypeName.VOID)
+                .addParameter(ClassName.INT, "requestCode")
+                .addStatement("srcActivity.startActivityForResult(intent, requestCode)")
+                .addStatement("intent = null")
+                .addStatement("srcActivity = null")
+                .build();
+        MethodSpec intentSetter = MethodSpec.methodBuilder("setIntent")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ClassNames.INTENT, "intent")
+                .addStatement("this.intent = intent")
+                .build();
+        MethodSpec intentGetter = MethodSpec.methodBuilder("getIntent")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(ClassNames.INTENT)
+                .addStatement("return intent")
+                .build();
         List<MethodSpec> valueSetters = new ArrayList<>();
 
         for (KeyValueEntity valueEntity : group.getIntentValues()) {
@@ -151,7 +166,10 @@ public class LaunchActivityIntentCodeBrewer extends CodeBrewer {
                 .addField(intent)
                 .addMethod(constructor)
                 .addMethod(go)
+                .addMethod(goForResult)
                 .addMethods(valueSetters)
+                .addMethod(intentGetter)
+                .addMethod(intentSetter)
                 .build();
         brewJavaFile(group.getPackageName(), AutoLauncher, mFileUtils);
     }

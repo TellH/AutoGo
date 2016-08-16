@@ -1,5 +1,6 @@
 package tellh.com.autogo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -16,7 +17,8 @@ public class TestActivity extends AppCompatActivity {
     //the annotated field should not be private
     @IntentValue("myName")
     String name;
-    @IntentValue int age;
+    @IntentValue
+    int age;
     @IntentValue
     ArrayList<String> friends;
     @IntentValue
@@ -32,6 +34,7 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test);
         initView();
         AutoGo.assign(this);
+
         tvAge.setText("Age:" + age);
         tvName.setText("Name:" + name);
         StringBuilder friendsStrBuilder = new StringBuilder();
@@ -52,5 +55,17 @@ public class TestActivity extends AppCompatActivity {
         tvName = (TextView) findViewById(R.id.tv_name);
         tvFriends = (TextView) findViewById(R.id.tv_friends);
         tvScores = (TextView) findViewById(R.id.tv_scores);
+    }
+
+    @Override
+    public void onBackPressed() {
+        feedBack();
+        super.onBackPressed();
+    }
+
+    private void feedBack() {
+        Intent intent = new Intent();
+        intent.putExtra("result", "Are you OK?");
+        setResult(RESULT_OK, intent);
     }
 }

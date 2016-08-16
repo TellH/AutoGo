@@ -5,4 +5,5 @@ package autogo.internal;
  */
 public interface AutoLauncher {
     void go();
+    void goForResult(int requestCode);
 }

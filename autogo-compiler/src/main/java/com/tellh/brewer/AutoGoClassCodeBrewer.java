@@ -51,7 +51,7 @@ public class AutoGoClassCodeBrewer {
 
         public void brewCode() throws IOException {
             TypeSpec.Builder builder = TypeSpec.classBuilder("AutoGo")
-                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
             brewAutoGo(builder);
             TypeSpec AutoGo = builder.build();
             CodeBrewer.brewJavaFile("autogo", AutoGo, mFileUtils);
@@ -152,8 +152,9 @@ public class AutoGoClassCodeBrewer {
             MethodSpec assign = MethodSpec.methodBuilder("assign")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addException(RuntimeException.class)
+                    .returns(ClassNames.INTENT)
                     .addParameter(ClassNames.ACTIVITY, "activity")
-                    .addStatement("getAssigner(activity).assign()")
+                    .addStatement("return getAssigner(activity).assign()")
                     .build();
             MethodSpec getAssigner = MethodSpec.methodBuilder("getAssigner")
                     .returns(ClassNames.AUTO_ASSIGNER)
