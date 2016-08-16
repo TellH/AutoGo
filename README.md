@@ -1,6 +1,7 @@
 # AutoGo ![AutoGo](https://raw.githubusercontent.com/TellH/AutoGo/master/raw/Go.png)
-[![Download](https://api.bintray.com/packages/tellh/maven/AutoGo/images/download.svg)](https://bintray.com/tellh/maven/AutoGo/_latestVersion)<br>
-AutoGo is a library that bases on the runtime annotations just like the butterKnife and dagger. In other word, it will generate 
+[![Download](https://api.bintray.com/packages/tellh/maven/AutoGo/images/download.svg)](https://bintray.com/tellh/maven/AutoGo/_latestVersion)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-AutoGo-yellowgreen.svg?style=flat)](http://android-arsenal.com/details/1/4047)<br>
+AutoGo is a library that bases on the Compile-time annotation just like the butterKnife and dagger. In other word, it will generate 
 some code automatically according to the annotations you add during compiling to emancipate us from boilerplate code.
 
 ##Setup
@@ -14,8 +15,8 @@ In app module build.gradle:
 ```
     apply plugin: 'com.neenbedankt.android-apt'
     dependencies {
-        compile 'com.tellh:autogo-core:1.0.2'
-        apt 'com.tellh:autogo-compiler:1.0.2'
+        compile 'com.tellh:autogo-core:1.0.3'
+        apt 'com.tellh:autogo-compiler:1.0.3'
     }
 ```
 
@@ -36,7 +37,7 @@ Then make project(Ctrl+F9).<br>
 Now, in your SrcActivity you can start the TargetActivity just like this:
 ```
         AutoGo.from(SrcActivity.this)
-                .gotoTestActivity()
+                .gotoTargetActivity()
                 .age(18)
                 .myName("tlh")
                 .friends(friends)
