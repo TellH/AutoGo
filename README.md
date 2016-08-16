@@ -15,8 +15,8 @@ In app module build.gradle:
 ```
     apply plugin: 'com.neenbedankt.android-apt'
     dependencies {
-        compile 'com.tellh:autogo-core:1.0.3'
-        apt 'com.tellh:autogo-compiler:1.0.3'
+        compile 'com.tellh:autogo-core:1.0.4'
+        apt 'com.tellh:autogo-compiler:1.0.4'
     }
 ```
 
@@ -93,6 +93,9 @@ Then whenever your want to restore the data to assign the field in your class, j
 ##Improve
 If you have some problem or advice, pleace don't hesitate to raise an issue.<br>
 Just have fun and hope this will lessen your code :)
+
+##Update
+- In version 1.0.4, add Autogo#goForResult(int requestCode)、setter and getter of Intent. Thanks contribution from @registernet .
 
 ##License
 
