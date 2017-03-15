@@ -101,8 +101,7 @@ Just have fun and hope this will lessen your code :)
 
 Apache Version 2.0<br>
 ```
-Copyright 2016 Rahul Yadav
-
+Copyright 2016 TellH
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
