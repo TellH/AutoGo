@@ -4,7 +4,7 @@
 AutoGo is a library that bases on the Compile-time annotation just like the butterKnife and dagger. In other word, it will generate 
 some code automatically according to the annotations you add during compiling to emancipate us from boilerplate code.
 
-##Setup
+## Setup
 In project root  build.gradle:
 ```
     dependencies {
@@ -20,7 +20,7 @@ In app module build.gradle:
     }
 ```
 
-##Usage
+## Usage
 - StartActivity in the awesome way.<br>
 Use the @IntentValue to annotate the fields of the target activity.
 like this:
@@ -90,14 +90,14 @@ Then whenever your want to restore the data to assign the field in your class, j
     }
 ```
 
-##Improve
+## Improve
 If you have some problem or advice, pleace don't hesitate to raise an issue.<br>
 Just have fun and hope this will lessen your code :)
 
-##Update
+## Update
 - In version 1.0.4, add Autogo#goForResult(int requestCode)、setter and getter of Intent. Thanks contribution from @registernet .
 
-##License
+## License
 
 Apache Version 2.0<br>
 ```
